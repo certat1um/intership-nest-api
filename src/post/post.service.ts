@@ -36,8 +36,6 @@ export class PostService {
       post.title = createPostDto.title;
       post.text = createPostDto.text;
       post.author = 'testAuthorId';
-      post.createdAt = new Date();
-      post.updatedAt = new Date();
 
       return this.postsRepository.save(post);
     } catch (err) {
