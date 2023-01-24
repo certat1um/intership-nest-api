@@ -1,16 +1,16 @@
 import {
   Entity,
   Column,
-  PrimaryColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 
 @Entity('posts')
 export class Post {
-  @PrimaryGeneratedColumn()
-  _id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   title: string;
@@ -18,12 +18,12 @@ export class Post {
   @Column()
   text: string;
 
-  @ManyToOne(() => User, (user) => user._id, { nullable: false })
-  author: User | number;
+  @ManyToOne(() => User, (user) => user.id, { nullable: false })
+  author: User | string;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @CreateDateColumn()
   updatedAt: Date;
 }

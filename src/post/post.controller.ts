@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus } from '@nestjs/common';
 import {
   Delete,
   Get,
@@ -18,31 +18,32 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get('posts')
-  async findAll(): Promise<Post[]> {
+  async findAll(): Promise<Post[] | string> {
     const posts = await this.postService.findAll();
     return posts;
   }
 
   @Get('post/:id')
-  async findOne(@Param('id') id: number): Promise<Post> {
-    return this.postService.findOneById(id);
+  async findOne(@Param('id') id: string): Promise<Post> {
+    const post = await this.postService.findOneById(id);
+    return post;
   }
 
   @PostReq('new-post')
-  async create(@Body() createPostDto: CreatePostDto): Promise<Post> {
+  async create(@Body() createPostDto: CreatePostDto): Promise<Post | void> {
     return this.postService.createOne(createPostDto);
   }
 
   @Put('update-post/:id')
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<UpdateResult> {
     return this.postService.updateOne(id, updatePostDto);
   }
 
   @Delete('delete-post/:id')
-  async delete(@Param('id') id: number): Promise<DeleteResult> {
+  async delete(@Param('id') id: string): Promise<DeleteResult> {
     return this.postService.deleteOne(id);
   }
 }
