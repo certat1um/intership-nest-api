@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from 'src/user/user.service';
 import { DeleteResult, UpdateResult, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -10,23 +11,31 @@ export class PostService {
   constructor(
     @InjectRepository(Post)
     private postsRepository: Repository<Post>,
+    private userService: UserService,
   ) {}
 
   async findAll(): Promise<Post[]> {
     return await this.postsRepository.find();
   }
 
-  async findOneById(id: string): Promise<Post> {
-    const post = await this.postsRepository.findOneByOrFail({ id });
-
-    return post;
+  async findOne(id: string): Promise<Post> {
+    return this.postsRepository.findOneByOrFail({ id });
   }
 
-  async createOne(createPostDto: CreatePostDto): Promise<Post> {
-    if (!createPostDto.title || !createPostDto.text) {
+  async createOne(createPostDto: CreatePostDto, userData: any): Promise<Post> {
+    if (!(createPostDto.title && createPostDto.text)) {
       throw new HttpException(
-        "Inputs shouldn't be empty!",
+        "Inputs shouldn't be empty.",
         HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const user = await this.userService.findOne(userData.email);
+
+    if(!user) {
+      throw new HttpException(
+        "User has not been found.",
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -35,7 +44,7 @@ export class PostService {
 
       post.title = createPostDto.title;
       post.text = createPostDto.text;
-      post.author = 'testAuthorId';
+      post.author = user.id;
 
       return this.postsRepository.save(post);
     } catch (err) {

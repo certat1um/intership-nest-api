@@ -1,11 +1,13 @@
 ### Main tasks:
  - [x] Realise CRUD operations for Post
  - [x] Realise token auth for User
- - [] Realise creating posts with dynamic author
+ - [x] Realise creating author posts
  - [] Write tests
 
 ### To ask:
  - 
 
 ### ToDo:
- - [] insert DB and SecretKey data into .env
+ - [x] realise create-user.dto
+ - [x] learn how to make author posts
+ - [] insert DB data and SecretKey into .env

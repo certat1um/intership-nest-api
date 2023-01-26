@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus } from '@nestjs/common';
+import { Request, Controller, UseGuards } from '@nestjs/common';
 import {
   Delete,
   Get,
@@ -7,6 +7,7 @@ import {
   Put,
   Body,
 } from '@nestjs/common/decorators';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -25,13 +26,14 @@ export class PostController {
 
   @Get('post/:id')
   async findOne(@Param('id') id: string): Promise<Post> {
-    const post = await this.postService.findOneById(id);
+    const post = await this.postService.findOne(id);
     return post;
   }
 
+  @UseGuards(JwtAuthGuard)
   @PostReq('new-post')
-  async create(@Body() createPostDto: CreatePostDto): Promise<Post | void> {
-    return this.postService.createOne(createPostDto);
+  async create(@Request() req, @Body() createPostDto: CreatePostDto): Promise<Post | void> {
+    return this.postService.createOne(createPostDto, req.user);
   }
 
   @Put('update-post/:id')

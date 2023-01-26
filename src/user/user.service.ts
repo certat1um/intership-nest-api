@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt/dist';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
@@ -12,22 +13,42 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
-  async findOne(email: string): Promise<any> {
+  async findOne(email: string): Promise<User> {
     return this.userRepository.findOneByOrFail({ email });
   }
 
-  async register(formData: any) {
-    const { firstname, lastname, ...otherData } = formData;
+  async register(createUserDto: CreateUserDto): Promise<User | HttpException> {
+    const { firstname, lastname, email, password } = createUserDto;
 
-    const payload = { email: otherData.email };
+    if (!(firstname && lastname && email && password)) {
+      throw new HttpException(
+        "All inputs are required",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-    const userData = {
-      fullname: `${firstname} ${lastname}`,
-      token: this.jwtService.sign(payload),
-      ...otherData,
-    };
+    const oldUser = await this.userRepository.findBy({ email: email });
 
-    return this.userRepository.save(userData);
+    if(oldUser.length) {
+      throw new HttpException(
+        "User already exists. Please login",
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    try {
+      const user = new User();
+
+      user.fullname = `${firstname} ${lastname}`;
+      user.email = email;
+      user.password = password;
+      user.token = this.jwtService.sign({ email });
+
+      return this.userRepository.save(user);
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   }
 
   async refreshUserToken(id: string, token: string) {

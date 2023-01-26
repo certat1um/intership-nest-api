@@ -24,7 +24,5 @@ export class AuthService {
     const generatedToken = await this.jwtService.sign(payload);
 
     return await this.userService.refreshUserToken(user.id, generatedToken);
-
-    //return { generatedToken };
   }
 }
