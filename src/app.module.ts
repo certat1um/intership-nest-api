@@ -7,18 +7,25 @@ import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
 import { Post } from './post/post.entity';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { config } from 'dotenv';
+config();
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: process.env.DB_HOST,
       port: 3306,
-      username: 'root',
-      password: '',
-      database: 'intership_site_blog',
+      username: process.env.USER_NAME,
+      password: process.env.USER_PASSWORD || '',
+      database: process.env.DB_DATABASE,
       entities: [Post, User],
       synchronize: true,
+    }),
+    JwtModule.register({
+      secret: 'secretKey',
+      signOptions: { expiresIn: '60m' },
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     PostModule,

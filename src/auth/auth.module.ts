@@ -5,19 +5,22 @@ import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport/dist';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { JwtService } from '@nestjs/jwt';
+import { GoogleStrategy } from './strategies/google.strategy';
+//import { config } from 'dotenv';
+import { User } from 'src/user/user.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+//config();
 
 @Module({
-  imports: [
-    UserModule,
-    PassportModule,
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60m' },
-    }),
+  imports: [TypeOrmModule.forFeature([User]), UserModule, PassportModule],
+  providers: [
+    JwtService,
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    GoogleStrategy,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

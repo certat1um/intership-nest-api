@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, Generated } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -6,14 +6,17 @@ export class User {
   id: string;
 
   @Column()
+  accountType: string = 'None';
+
+  @Column({ unique: true })
   email: string;
 
   @Column()
   fullname: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
-  @Column()
+  @Column({ unique: true })
   token: string;
 }

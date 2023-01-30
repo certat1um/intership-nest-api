@@ -20,19 +20,20 @@ export class PostController {
 
   @Get('posts')
   async findAll(): Promise<Post[] | string> {
-    const posts = await this.postService.findAll();
-    return posts;
+    return this.postService.findAll();
   }
 
   @Get('post/:id')
   async findOne(@Param('id') id: string): Promise<Post> {
-    const post = await this.postService.findOne(id);
-    return post;
+    return this.postService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @PostReq('new-post')
-  async create(@Request() req, @Body() createPostDto: CreatePostDto): Promise<Post | void> {
+  async create(
+    @Request() req,
+    @Body() createPostDto: CreatePostDto,
+  ): Promise<Post | void> {
     return this.postService.createOne(createPostDto, req.user);
   }
 

@@ -10,8 +10,8 @@ import { Post } from './post.entity';
 export class PostService {
   constructor(
     @InjectRepository(Post)
-    private postsRepository: Repository<Post>,
-    private userService: UserService,
+    private postsRepository?: Repository<Post>,
+    private userService?: UserService,
   ) {}
 
   async findAll(): Promise<Post[]> {
@@ -19,7 +19,7 @@ export class PostService {
   }
 
   async findOne(id: string): Promise<Post> {
-    return this.postsRepository.findOneByOrFail({ id });
+    return this.postsRepository.findOneBy({ id });
   }
 
   async createOne(createPostDto: CreatePostDto, userData: any): Promise<Post> {
@@ -31,13 +31,6 @@ export class PostService {
     }
 
     const user = await this.userService.findOne(userData.email);
-
-    if(!user) {
-      throw new HttpException(
-        "User has not been found.",
-        HttpStatus.NOT_FOUND,
-      );
-    }
 
     try {
       const post = new Post();
