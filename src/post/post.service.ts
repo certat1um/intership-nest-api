@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { DeleteResult, UpdateResult, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -41,7 +41,6 @@ export class PostService {
 
       return this.postsRepository.save(post);
     } catch (err) {
-      console.log(err);
       return err;
     }
   }

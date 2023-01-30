@@ -23,10 +23,6 @@ config();
       entities: [Post, User],
       synchronize: true,
     }),
-    JwtModule.register({
-      secret: 'secretKey',
-      signOptions: { expiresIn: '60m' },
-    }),
     ConfigModule.forRoot({ isGlobal: true }),
     PostModule,
     UserModule,

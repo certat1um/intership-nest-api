@@ -14,10 +14,6 @@ export class UserService {
     return this.userRepository.findOneBy({ email });
   }
 
-  async refreshUserToken(id: string, token: string) {
-    return this.userRepository.update(id, { token });
-  }
-
   async registerInDB(user: User) {
     return this.userRepository.save(user);
   }

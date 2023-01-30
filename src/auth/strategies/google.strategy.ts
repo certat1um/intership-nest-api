@@ -4,7 +4,6 @@ import { config } from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/user.entity';
-import { jwtRandom } from '../helpers/jwtRandom';
 config();
 
 @Injectable()
@@ -30,7 +29,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     user.email = emails[0].value;
     user.fullname = displayName;
     user.accountType = 'Google';
-    user.token = jwtRandom();
 
     const existingUser = await this.userService.findOne(user.email);
 

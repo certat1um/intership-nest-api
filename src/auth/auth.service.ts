@@ -5,7 +5,6 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { config } from 'dotenv';
-import { jwtRandom } from './helpers/jwtRandom';
 config();
 
 @Injectable()
@@ -25,14 +24,11 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User) {
+  async login(user: User): Promise<string> {
     const payload = { email: user.email };
-    //const generatedToken = this.jwtService.sign(payload);
-    const generatedToken = jwtRandom();
+    const generatedToken = this.jwtService.sign(payload);
 
-    console.log(generatedToken);
-
-    return this.userService.refreshUserToken(user.id, generatedToken);
+    return generatedToken;
   }
 
   async register(createUserDto: CreateUserDto): Promise<User | HttpException> {
@@ -60,13 +56,10 @@ export class AuthService {
       user.fullname = `${firstname} ${lastname}`;
       user.email = email;
       user.password = password;
-      //user.token = 'this.jwtService.sign({ email })';
-      user.token = jwtRandom();
 
       return this.userService.registerInDB(user);
     } catch (err) {
       console.log(err);
-      return err;
     }
   }
 
