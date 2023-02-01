@@ -10,22 +10,22 @@ import { Post } from './post.entity';
 export class PostService {
   constructor(
     @InjectRepository(Post)
-    private postsRepository?: Repository<Post>,
+    private postRepository: Repository<Post>,
     private userService?: UserService,
   ) {}
 
   async findAll(): Promise<Post[]> {
-    return await this.postsRepository.find();
+    return await this.postRepository.find();
   }
 
   async findOne(id: string): Promise<Post> {
-    return this.postsRepository.findOneBy({ id });
+    return this.postRepository.findOneBy({ id });
   }
 
   async createOne(createPostDto: CreatePostDto, userData: any): Promise<Post> {
     if (!(createPostDto.title && createPostDto.text)) {
       throw new HttpException(
-        "Inputs shouldn't be empty.",
+        'Required inputs are empty.',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -39,7 +39,7 @@ export class PostService {
       post.text = createPostDto.text;
       post.author = user.id;
 
-      return this.postsRepository.save(post);
+      return this.postRepository.save(post);
     } catch (err) {
       return err;
     }
@@ -51,9 +51,15 @@ export class PostService {
   ): Promise<UpdateResult> {
     if (!updatePostDto.title || !updatePostDto.text) {
       throw new HttpException(
-        "Inputs shouldn't be empty!",
+        'Required inputs are empty.',
         HttpStatus.BAD_REQUEST,
       );
+    }
+
+    const post = await this.postRepository.findOneBy({ id });
+
+    if (!post) {
+      throw new HttpException('Post has not been found', HttpStatus.NOT_FOUND);
     }
 
     const updatedData = {
@@ -62,16 +68,16 @@ export class PostService {
       updatedAt: new Date(),
     };
 
-    return this.postsRepository.update(id, updatedData);
+    return this.postRepository.update(id, updatedData);
   }
 
   async deleteOne(id: string): Promise<DeleteResult> {
-    const post = await this.postsRepository.findOneByOrFail({ id });
+    const post = await this.postRepository.findOneBy({ id });
 
     if (!post) {
       throw new HttpException('Post has not been found', HttpStatus.NOT_FOUND);
     }
 
-    return this.postsRepository.delete(id);
+    return this.postRepository.delete(id);
   }
 }

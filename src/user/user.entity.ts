@@ -15,5 +15,5 @@ export class User {
   fullname: string;
 
   @Column({ nullable: true })
-  password: string;
+  password?: string;
 }

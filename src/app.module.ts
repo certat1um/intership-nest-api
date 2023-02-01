@@ -7,7 +7,6 @@ import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
 import { Post } from './post/post.entity';
 import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
 import { config } from 'dotenv';
 config();
 
@@ -28,6 +27,7 @@ config();
     UserModule,
     AuthModule,
   ],
+  providers: [],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}

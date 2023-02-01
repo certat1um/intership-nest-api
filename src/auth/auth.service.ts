@@ -1,9 +1,9 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt/dist';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { User } from 'src/user/user.entity';
-import { UserService } from 'src/user/user.service';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { User } from '../user/user.entity';
+import { UserService } from '../user/user.service';
 import { config } from 'dotenv';
 config();
 
@@ -31,12 +31,12 @@ export class AuthService {
     return generatedToken;
   }
 
-  async register(createUserDto: CreateUserDto): Promise<User | HttpException> {
+  async register(createUserDto: CreateUserDto): Promise<User> {
     const { firstname, lastname, email, password } = createUserDto;
 
     if (!(firstname && lastname && email && password)) {
       throw new HttpException(
-        'All inputs are required',
+        'Required inputs are empty.',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -59,7 +59,7 @@ export class AuthService {
 
       return this.userService.registerInDB(user);
     } catch (err) {
-      console.log(err);
+      return err;
     }
   }
 
@@ -67,9 +67,6 @@ export class AuthService {
     if (!user) {
       return 'No user from google';
     }
-
-    return {
-      user,
-    };
+    return user
   }
 }

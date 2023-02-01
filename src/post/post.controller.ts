@@ -28,8 +28,8 @@ export class PostController {
     return this.postService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @PostReq('new-post')
+  @UseGuards(JwtAuthGuard)
   async create(
     @Request() req,
     @Body() createPostDto: CreatePostDto,
