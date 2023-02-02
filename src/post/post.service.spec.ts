@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user/user.service';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { Post } from './post.entity';
 import { PostService } from './post.service';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
 import { HttpException } from '@nestjs/common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
@@ -60,7 +60,6 @@ describe('PostService', () => {
       title: 'title',
       text: 'text',
     };
-    const emptyDto = {} as CreatePostDto;
     const userData = {
       email: 'example@ex.com',
     };
@@ -88,18 +87,6 @@ describe('PostService', () => {
       const result = await postService.createOne(createPostDto, userData);
 
       expect(result).toEqual(expectedResponse);
-    });
-
-    it('throws HttpException with message and statuscode if createPostDto is empty', async () => {
-      const expectedResult = new HttpException(
-        'Required inputs are empty.',
-        HttpStatus.BAD_REQUEST,
-      );
-
-      const resultFn = async () =>
-        await postService.createOne(emptyDto, userData);
-
-      expect(resultFn).rejects.toThrow(expectedResult);
     });
   });
 
@@ -131,19 +118,7 @@ describe('PostService', () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it('throws HttpException with message and statuscode if updatePostDto is empty', async () => {
-      const expectedResult = new HttpException(
-        'Required inputs are empty.',
-        HttpStatus.BAD_REQUEST,
-      );
-
-      const resultFn = async () =>
-        await postService.updateOne(postIdToUpdate, emptyDto);
-
-      expect(resultFn).rejects.toThrow(expectedResult);
-    });
-
-    it('throws HttpException with message and statuscode if post is absent', async () => {
+    it('throws HttpException with message and statuscode if post is not exist', async () => {
       const expectedResult = new HttpException(
         'Post has not been found',
         HttpStatus.NOT_FOUND,

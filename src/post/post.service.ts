@@ -23,13 +23,6 @@ export class PostService {
   }
 
   async createOne(createPostDto: CreatePostDto, userData: any): Promise<Post> {
-    if (!(createPostDto.title && createPostDto.text)) {
-      throw new HttpException(
-        'Required inputs are empty.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     const user = await this.userService.findOne(userData.email);
 
     try {
@@ -49,13 +42,6 @@ export class PostService {
     id: string,
     updatePostDto: UpdatePostDto,
   ): Promise<UpdateResult> {
-    if (!updatePostDto.title || !updatePostDto.text) {
-      throw new HttpException(
-        'Required inputs are empty.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     const post = await this.postRepository.findOneBy({ id });
 
     if (!post) {

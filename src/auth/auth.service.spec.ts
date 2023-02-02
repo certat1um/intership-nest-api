@@ -50,15 +50,10 @@ describe('AuthService', () => {
   });
 
   describe('login()', () => {
-    it('returns string', async () => {
-      const user: User = {
-        id: '1',
-        accountType: 'None',
-        email: 'example@ex.com',
-        fullname: 'John Smith',
-      };
+    it('returns string if success', async () => {
+      const userEmail = 'example@ex.com';
 
-      const result = await authService.login(user);
+      const result = await authService.login(userEmail);
 
       expect(typeof result).toBe('string');
     });
@@ -92,19 +87,7 @@ describe('AuthService', () => {
       expect(result).toEqual(user);
     });
 
-    it('throws HttpException with message and statuscode if createUserDto is empty', async () => {
-      const emptyDto = {} as CreateUserDto;
-      const expectedResult = new HttpException(
-        'Required inputs are empty.',
-        HttpStatus.BAD_REQUEST,
-      );
-
-      const resultFn = async () => await authService.register(emptyDto);
-
-      expect(resultFn).rejects.toThrow(expectedResult);
-    });
-
-    it('throws HttpException with message and statuscode if oldUser has been found', async () => {
+    it('throws HttpException with message and statuscode if user is already exist', async () => {
       const expectedResult = new HttpException(
         'User already exists. Please login',
         HttpStatus.CONFLICT,

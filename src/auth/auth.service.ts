@@ -18,14 +18,13 @@ export class AuthService {
     const user = await this.userService.findOne(email);
 
     if (user && user.password === pass && user.accountType === 'None') {
-      const { password, ...result } = user;
-      return result;
+      return user.email;
     }
     return null;
   }
 
-  async login(user: User): Promise<string> {
-    const payload = { email: user.email };
+  async login(userEmail: string): Promise<string> {
+    const payload = { email: userEmail };
     const generatedToken = this.jwtService.sign(payload);
 
     return generatedToken;
@@ -33,13 +32,6 @@ export class AuthService {
 
   async register(createUserDto: CreateUserDto): Promise<User> {
     const { firstname, lastname, email, password } = createUserDto;
-
-    if (!(firstname && lastname && email && password)) {
-      throw new HttpException(
-        'Required inputs are empty.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
 
     const oldUser = await this.userService.findOne(email);
 
@@ -67,6 +59,6 @@ export class AuthService {
     if (!user) {
       return 'No user from google';
     }
-    return user
+    return user;
   }
 }
