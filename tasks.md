@@ -5,6 +5,7 @@
  - [x] Realise OAuth2 Google
  - [x] Write tests
  - [x] Implement Validator
+ - [] Realise file upload with stream
 
 ### To ask:
  - 
@@ -16,4 +17,5 @@
   - [x] register(): (throws errors, returns user)
 
 ### ToDo:
- - [] 
+ - [x] loginByGoogle(): throw exception
+ - [] createUserDto: password valid (length)

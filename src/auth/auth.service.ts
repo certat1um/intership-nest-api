@@ -55,9 +55,12 @@ export class AuthService {
     }
   }
 
-  async loginByGoogle(user: User) {
-    if (!user) {
-      return 'No user from google';
+  async loginByGoogle(user: User | null): Promise<User | any> {
+    if (user === null) {
+      throw new HttpException(
+        'Failed authentification via Google',
+        HttpStatus.CONFLICT,
+      )
     }
     return user;
   }

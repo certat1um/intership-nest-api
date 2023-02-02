@@ -49,24 +49,23 @@ describe('AuthService', () => {
     expect(authService).toBeDefined();
   });
 
+  const user = {
+    id: '1',
+    accountType: 'None',
+    email: 'example@ex.com',
+    fullname: 'John Smith',
+    password: '123',
+  };
+
   describe('login()', () => {
     it('returns string if success', async () => {
-      const userEmail = 'example@ex.com';
-
-      const result = await authService.login(userEmail);
+      const result = await authService.login(user.email);
 
       expect(typeof result).toBe('string');
     });
   });
 
   describe('register()', () => {
-    const user: User = {
-      id: '1',
-      accountType: 'None',
-      email: 'example@ex.com',
-      fullname: 'John Smith',
-      password: '123',
-    };
     const createUserDto: CreateUserDto = {
       firstname: 'John',
       lastname: 'Smith',
@@ -98,6 +97,25 @@ describe('AuthService', () => {
         .mockImplementationOnce(async () => user);
 
       const resultFn = async () => await authService.register(createUserDto);
+
+      expect(resultFn).rejects.toThrow(expectedResult);
+    });
+  });
+
+  describe('loginByGoogle()', () => {
+    it('returns a user if success', async () => {
+      const result = await authService.loginByGoogle(user);
+
+      expect(result).toEqual(user);
+    });
+    
+    it('throws HttpException with message and statuscode if user is null', async () => {
+      const expectedResult = new HttpException(
+        'Failed authentification via Google',
+        HttpStatus.CONFLICT,
+      );
+
+      const resultFn = async () => await authService.loginByGoogle(null);
 
       expect(resultFn).rejects.toThrow(expectedResult);
     });
