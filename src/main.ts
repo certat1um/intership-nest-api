@@ -9,12 +9,12 @@ async function bootstrap() {
   const PORT = process.env.APP_PORT || 3000;
   const HOST = process.env.APP_HOST || 'localhost';
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
+  //app.useGlobalPipes(
+  //  new ValidationPipe({
+  //    whitelist: true,
+  //    forbidNonWhitelisted: true,
+  //  }),
+  //);
 
   await app.listen(PORT, HOST, () => {
     console.log(`App started on port ${HOST}:${PORT}`);

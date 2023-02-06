@@ -108,7 +108,7 @@ describe('AuthService', () => {
 
       expect(result).toEqual(user);
     });
-    
+
     it('throws HttpException with message and statuscode if user is null', async () => {
       const expectedResult = new HttpException(
         'Failed authentification via Google',

@@ -8,4 +8,8 @@ export class CreatePostDto {
   @IsNotEmpty()
   @IsString()
   readonly text: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly logoUrl: string;
 }

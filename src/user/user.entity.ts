@@ -1,5 +1,5 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -7,13 +7,13 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @IsString()
-  @Column()
-  accountType: string = 'None';
-
   @IsEmail()
   @Column({ unique: true })
   email: string;
+
+  @IsString()
+  @Column()
+  accountType: string = 'None';
 
   @IsString()
   @Column()

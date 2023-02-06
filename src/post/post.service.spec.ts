@@ -1,22 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user/user.service';
 import { Repository, UpdateResult } from 'typeorm';
-import { Post } from './post.entity';
+import { Post } from './entities/post.entity';
 import { PostService } from './post.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
 import { HttpException } from '@nestjs/common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostLogo } from './entities/post-logo.entity';
 
 describe('PostService', () => {
   let postService: PostService;
   let userService: UserService;
   let postRepository: Repository<Post>;
   let userRepository: Repository<User>;
+  let PostLogoRepository: Repository<PostLogo>;
 
   const POST_REP_TOKEN = getRepositoryToken(Post);
   const USER_REP_TOKEN = getRepositoryToken(User);
+  const POST_LOGO_REP_TOKEN = getRepositoryToken(PostLogo);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +41,12 @@ describe('PostService', () => {
             save: jest.fn(),
           },
         },
+        {
+          provide: POST_LOGO_REP_TOKEN,
+          useValue: {
+            save: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -45,6 +54,7 @@ describe('PostService', () => {
     userService = module.get<UserService>(UserService);
     postRepository = module.get<Repository<Post>>(POST_REP_TOKEN);
     userRepository = module.get<Repository<User>>(USER_REP_TOKEN);
+    PostLogoRepository = module.get<Repository<PostLogo>>(POST_LOGO_REP_TOKEN);
   });
 
   it('all dependencies should be defined', () => {
@@ -58,6 +68,7 @@ describe('PostService', () => {
     const createPostDto = {
       title: 'title',
       text: 'text',
+      logoUrl: 'http://localhost:3333/images/example.png',
     };
     const userData = {
       email: 'example@ex.com',
@@ -71,6 +82,7 @@ describe('PostService', () => {
         id: '1',
         title: createPostDto.title,
         text: createPostDto.text,
+        logo: createPostDto.logoUrl,
         author: foundUser.id,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -79,11 +91,19 @@ describe('PostService', () => {
       jest
         .spyOn(postRepository, 'save')
         .mockImplementationOnce(async () => expectedResponse);
+      jest
+        .spyOn(PostLogoRepository, 'save')
+        .mockImplementationOnce(async () => {
+          return {
+            id: '1',
+            url: createPostDto.logoUrl,
+          } as PostLogo;
+        });
       jest.spyOn(userService, 'findOne').mockImplementationOnce(async () => {
         return foundUser as User;
       });
 
-      const result = await postService.createOne(createPostDto, userData);
+      const result = await postService.createOne(createPostDto, userData.email);
 
       expect(result).toEqual(expectedResponse);
     });

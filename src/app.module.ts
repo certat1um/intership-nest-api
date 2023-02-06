@@ -5,9 +5,10 @@ import { ConfigModule } from '@nestjs/config/dist';
 import { PostModule } from './post/post.module';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
-import { Post } from './post/post.entity';
+import { Post } from './post/entities/post.entity';
 import { AuthModule } from './auth/auth.module';
 import { config } from 'dotenv';
+import { PostLogo } from './post/entities/post-logo.entity';
 config();
 
 @Module({
@@ -19,8 +20,9 @@ config();
       username: process.env.USER_NAME,
       password: process.env.USER_PASSWORD || '',
       database: process.env.DB_DATABASE,
-      entities: [Post, User],
+      entities: [Post, User, PostLogo],
       synchronize: true,
+      logging: true,
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     PostModule,

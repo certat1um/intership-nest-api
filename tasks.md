@@ -5,17 +5,14 @@
  - [x] Realise OAuth2 Google
  - [x] Write tests
  - [x] Implement Validator
- - [] Realise file upload with stream
+ - [x] Realise file upload with stream
 
 ### To ask:
  - 
 
-### Write tests:
- - [x] Post services (create, update, delete)
- - [x] Auth services:
-  - [x] login(): returns string token
-  - [x] register(): (throws errors, returns user)
-
-### ToDo:
- - [x] loginByGoogle(): throw exception
- - [] createUserDto: password valid (length)
+### Refactor:
+ - [x] external interceptor
+ - [x] external table of post_logos (id, url)
+ - [x] think how to transfer logo id to createOne post method
+ - [x] fix database working with new entity
+ - [x] refactor tests

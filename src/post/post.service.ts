@@ -1,17 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from '../user/user.service';
-import { DeleteResult, UpdateResult, Repository } from 'typeorm';
+import { DeleteResult, UpdateResult, Repository, DataSource } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Post } from './post.entity';
+import { Post } from './entities/post.entity';
+import { CreatePostLogoDto } from './dto/create-post-logo.dto';
+import { PostLogo } from './entities/post-logo.entity';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
-    private userService?: UserService,
+    @InjectRepository(PostLogo)
+    private postLogoRepository: Repository<PostLogo>,
+    private userService: UserService,
   ) {}
 
   async findAll(): Promise<Post[]> {
@@ -22,15 +26,20 @@ export class PostService {
     return this.postRepository.findOneBy({ id });
   }
 
-  async createOne(createPostDto: CreatePostDto, userData: any): Promise<Post> {
-    const user = await this.userService.findOne(userData.email);
+  async createOne(postDto: CreatePostDto, userEmail: string): Promise<Post> {
+    const user = await this.userService.findOne(userEmail);
 
     try {
-      const post = new Post();
+      const postLogo = new PostLogo();
+      postLogo.url = postDto.logoUrl;
 
-      post.title = createPostDto.title;
-      post.text = createPostDto.text;
+      const post = new Post();
+      post.title = postDto.title;
+      post.text = postDto.text;
       post.author = user.id;
+
+      const { id } = await this.postLogoRepository.save(postLogo);
+      post.logo = id;
 
       return this.postRepository.save(post);
     } catch (err) {
@@ -38,10 +47,7 @@ export class PostService {
     }
   }
 
-  async updateOne(
-    id: string,
-    updatePostDto: UpdatePostDto,
-  ): Promise<UpdateResult> {
+  async updateOne(id: string, postDto: UpdatePostDto): Promise<UpdateResult> {
     const post = await this.postRepository.findOneBy({ id });
 
     if (!post) {
@@ -49,8 +55,8 @@ export class PostService {
     }
 
     const updatedData = {
-      title: updatePostDto.title,
-      text: updatePostDto.text,
+      title: postDto.title,
+      text: postDto.text,
       updatedAt: new Date(),
     };
 
