@@ -22,7 +22,7 @@ config();
       database: process.env.DB_DATABASE,
       entities: [Post, User, PostLogo],
       synchronize: true,
-      logging: true,
+      logging: true, 
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     PostModule,
